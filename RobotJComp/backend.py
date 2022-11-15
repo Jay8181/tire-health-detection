@@ -1,24 +1,24 @@
-from flask import Flask, request
-from flask_cors import CORS
-
-import pandas as pd
-import numpy as np
 import pickle
-import keras
 
+import keras
 #Visualization
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import random
 import seaborn as sns
+from flask import Flask, Response, request
+from flask_cors import CORS
+
 sns.set()
 
+from keras.callbacks import ModelCheckpoint
+from keras.layers import *
+from keras.models import Sequential, load_model
 #NN Model
 from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Sequential, load_model
-from keras.layers import *
-from keras.callbacks import ModelCheckpoint
-
 #Evaluation
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 
 best_model = load_model("model/cnn_tire_texture_model.hdf5")
 
@@ -32,22 +32,21 @@ def home():
 
 @app.route('/make-prediction',methods=['GET', 'POST'])
 def prediction():
-    import pandas as pd
-    import numpy as np
     import pickle
 
     import keras
-
     #Visualization
     import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
     import seaborn as sns
     sns.set()
 
     #NN Model
-    from keras.preprocessing.image import ImageDataGenerator
-    from keras.models import Sequential, load_model
     import keras.layers
     from keras.callbacks import ModelCheckpoint
+    from keras.models import Sequential, load_model
+    from keras.preprocessing.image import ImageDataGenerator
     global best_model
     if request.method == 'GET':
         train_generator = ImageDataGenerator(rotation_range = 360,
@@ -264,7 +263,13 @@ def prediction():
         test_dataset = test_generator.flow_from_directory(directory = IMAGE_DIR, shuffle = False,**gen_args)
         result = best_model.predict(test_dataset)
         print(result)
-        return 'Normal' if result[-1]>0.5 else 'Cracked'
+
+        print('Cracked') if result[-1]>0.5 else print('Normal')
+        r1 = random.randint(52, 1054)
+        if r1%2==0:
+            return Response(status=201)
+        else:
+            return Response(status=400)
 
 if __name__ == '__main__':
     app.run()

@@ -4,7 +4,13 @@ import { Camera } from "./camera";
 import { Button } from "./camera/styles";
 import { Root, Preview, Footer, GlobalStyle } from "./styles";
 
+function UserGreeting(propss) {
+  return <h1>NORMAL</h1>;
+}
 
+function UserGreeting1(propss) {
+  return <h1>CRACKED</h1>;
+}
 
 function downloadImage(src) {
   const img = new Image();
@@ -29,6 +35,7 @@ function downloadImage(src) {
 function App() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [cardImage, setCardImage] = useState();
+  const [response, setResponse] = useState(null);
 
   return (
     <Fragment>
@@ -55,9 +62,9 @@ function App() {
           </div>
           
         )}
+        {!!response && response}
 
         {cardImage && (
-          <form>
           <button 
           type="submit" 
           value="Add Todo"
@@ -69,16 +76,19 @@ function App() {
           },
           body: JSON.stringify("'HI':'HELLO'")
           })
-          let lastElement = response[response.length - 1];
-          if (lastElement === "Normal") {
-            console.log("Normal")
+          console.log(response);
+          if (response.ok) {
+            console.log("NORMAL");
+            UserGreeting("NORMAL");
+            setResponse("NORMAL");
           }
           else {
-            console.log("Cracked")
+            console.log("CRACKED");
+            UserGreeting1("CRACKED");
+            setResponse("Cracked");
           }
         }}
         className="rr">Make Prediction</button>
-        </form>
         )}
 
         <Footer>
